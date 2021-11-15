@@ -141,8 +141,8 @@ workflows:
             requires:
               - create_infrastructure
         - delete-aws-infrastructure:
-          requires: 
-            - configure_infrastructure
+            requires: 
+              - configure_infrastructure
 
   # say-hello-workflow:
   #   jobs:
