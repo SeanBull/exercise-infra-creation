@@ -33,6 +33,10 @@ jobs:
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --region us-east-1 \
             --output text >> inventory
+      -run: 
+        name: install tar
+        command: | 
+          apt-get install tar
       - persist_to_workspace:
           root: ~/
           paths:
