@@ -47,5 +47,5 @@ workflows:
     jobs:
       - create-aws-infrastructure
       - delete-aws-infrastructure:
-        requires: 
-          - create-aws-infrastructure
+          requires: 
+            - create-aws-infrastructure
