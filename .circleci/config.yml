@@ -11,7 +11,7 @@ jobs:
   # Exercise: Config and Deployment
   configure_infrastructure: 
     docker:
-      - image: 
+      - image: python:3.7-alpine3.11
     steps:
       - checkout
       - add_ssh_keys:
@@ -20,7 +20,8 @@ jobs:
       - run:
           name: Install Ansible
           command: |
-            npm install ansible -g
+            apk add --update ansible
+
       - run:
           name: Run Playbook and Configure server
           command: |
@@ -65,7 +66,7 @@ jobs:
 workflows:
     using-ansible:
       jobs:
-        - configure-infrastructure
+        - configure_infrastructure
   # say-hello-workflow:
   #   jobs:
   #     - create-aws-infrastructure
