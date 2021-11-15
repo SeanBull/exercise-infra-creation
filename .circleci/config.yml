@@ -36,7 +36,7 @@ jobs:
       - run: 
           name: install tar
           command: | 
-            apt-get install tar
+            sudo apt-get install tar
       - persist_to_workspace:
           root: ~/
           paths:
