@@ -8,44 +8,67 @@ orbs:
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
-  create-aws-infrastructure:
-    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+  # Exercise: Config and Deployment
+  configure_infrastructure: 
     docker:
-      - image: amazon/aws-cli
-    # Add steps to the job
-    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+      - image: 
     steps:
       - checkout
+      - add_ssh_keys:
+              # You can get this ID in the section where you registered the SSH Key
+              fingerprints: ["94:20:45:51:80:4c:c9:d0:af:64:27:9c:46:b9:0d:df"] 
       - run:
-          name: Create Cloudformation Stack
+          name: Install Ansible
           command: |
-            aws cloudformation deploy \
-              --template-file template.yml \
-              --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
-              --region us-east-1
-  delete-aws-infrastructure:
-    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
-    docker:
-      - image: amazon/aws-cli
-    # Add steps to the job
-    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
-    steps:
-      - checkout
+            npm install ansible -g
       - run:
-          name: delete Cloudformation Stack
+          name: Run Playbook and Configure server
           command: |
-            aws cloudformation delete-stack \
-              --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
-              --region us-east-1
+            ansible-playbook main.yml -i inventory --private-key ../udacity-chrome.pem
+            
+
+# --------------------Previous Work----------------------
+  # create-aws-infrastructure:
+  #   # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
+  #   # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+  #   docker:
+  #     - image: amazon/aws-cli
+  #   # Add steps to the job
+  #   # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+  #   steps:
+  #     - checkout
+  #     - run:
+  #         name: Create Cloudformation Stack
+  #         command: |
+  #           aws cloudformation deploy \
+  #             --template-file template.yml \
+  #             --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
+  #             --region us-east-1
+  # delete-aws-infrastructure:
+  #   # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
+  #   # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+  #   docker:
+  #     - image: amazon/aws-cli
+  #   # Add steps to the job
+  #   # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+  #   steps:
+  #     - checkout
+  #     - run:
+  #         name: delete Cloudformation Stack
+  #         command: |
+  #           aws cloudformation delete-stack \
+  #             --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
+  #             --region us-east-1
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  say-hello-workflow:
-    jobs:
-      - create-aws-infrastructure
-      - delete-aws-infrastructure:
-          requires: 
-            - create-aws-infrastructure
+    using-ansible:
+      jobs:
+        - configure-infrastructure
+  # say-hello-workflow:
+  #   jobs:
+  #     - create-aws-infrastructure
+  #     - delete-aws-infrastructure:
+  #         requires: 
+  #           - create-aws-infrastructure
