@@ -12,6 +12,7 @@ jobs:
   create_infrastructure:
     docker:
       - image: amazon/aws-cli
+    
     steps:
       - checkout
       - run:
@@ -21,22 +22,6 @@ jobs:
               --template-file template.yml \
               --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
               --region us-east-1
-
-
-  configure_infrastructure: 
-    docker:
-      - image: python:3.7-alpine3.11
-    steps:
-      - checkout
-      - add_ssh_keys:
-              # You can get this ID in the section where you registered the SSH Key
-              fingerprints: ["94:20:45:51:80:4c:c9:d0:af:64:27:9c:46:b9:0d:df"] 
-      - run: 
-          name: install aws
-          command: |
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
-            unzip awscliv2.zip \
-            sudo ./aws/install
       - run: 
           name: refresh inventory
           command: |
@@ -48,6 +33,23 @@ jobs:
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --region us-east-1 --profile admin \
             --output text >> inventory
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - inventory
+
+
+  configure_infrastructure: 
+    docker:
+      - image: python:3.7-alpine3.11
+
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/
+      - add_ssh_keys:
+              # You can get this ID in the section where you registered the SSH Key
+              fingerprints: ["94:20:45:51:80:4c:c9:d0:af:64:27:9c:46:b9:0d:df"] 
       - run:
           name: Install Ansible
           command: |
