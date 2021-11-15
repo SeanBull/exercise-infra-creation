@@ -34,7 +34,7 @@ jobs:
       - run: 
           name: refresh inventory
           command: |
-            "[all]" > inventory
+            echo "[all]" > inventory
       - run:
           name: update inventory
           command: |
