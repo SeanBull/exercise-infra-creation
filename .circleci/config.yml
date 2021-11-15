@@ -31,7 +31,7 @@ jobs:
           command: |
             aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --region us-east-1 --profile admin \
+            --region us-east-1 \
             --output text >> inventory
       - persist_to_workspace:
           root: ~/
