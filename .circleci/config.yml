@@ -33,14 +33,14 @@ jobs:
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --region us-east-1 \
             --output text >> inventory
-      - run: 
-          name: install tar
-          command: | 
-            sudo apt-get install tar
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - inventory
+      # - run: 
+      #     name: install tar
+      #     command: | 
+      #       sudo apt-get install tar
+      # - persist_to_workspace:
+      #     root: ~/
+      #     paths:
+      #       - inventory
 
 
   configure_infrastructure: 
@@ -49,8 +49,8 @@ jobs:
 
     steps:
       - checkout
-      - attach_workspace:
-          at: ~/
+      # - attach_workspace:
+      #     at: ~/
       - add_ssh_keys:
               # You can get this ID in the section where you registered the SSH Key
               fingerprints: ["94:20:45:51:80:4c:c9:d0:af:64:27:9c:46:b9:0d:df"] 
